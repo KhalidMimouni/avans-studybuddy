@@ -19,9 +19,9 @@
 
 > Als bezoeker wil ik een account kunnen registreren, zodanig dat ik toegang kan krijgen tot persoonlijke functionaliteiten binnen StudyBuddy.
 
-- [ ] Registratieformulier met voornaam, achternaam, e-mail, studentnummer, opleiding, wachtwoord
-- [ ] Na succesvolle registratie kan de gebruiker inloggen
-- [ ] E-mailadres mag maar een keer voorkomen
+- [x] Registratieformulier met voornaam, achternaam, e-mail, studentnummer, opleiding, wachtwoord
+- [x] Na succesvolle registratie kan de gebruiker inloggen
+- [x] E-mailadres mag maar een keer voorkomen
 
 ## F-02: Inloggen en uitloggen
 
