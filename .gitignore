@@ -54,5 +54,3 @@ vitest.config.*.timestamp*
 
 # SQLite database files
 *.db
-.gitignore
-.cursor

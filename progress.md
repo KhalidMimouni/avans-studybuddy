@@ -27,9 +27,9 @@
 
 > Als gebruiker wil ik kunnen inloggen en uitloggen, zodanig dat mijn persoonlijke gegevens en acties beveiligd zijn.
 
-- [ ] Loginformulier met e-mailadres en wachtwoord
-- [ ] Ingelogde gebruiker krijgt toegang tot afgeschermde functionaliteiten
-- [ ] Na uitloggen zijn afgeschermde onderdelen niet meer toegankelijk
+- [x] Loginformulier met e-mailadres en wachtwoord
+- [x] Ingelogde gebruiker krijgt toegang tot afgeschermde functionaliteiten
+- [x] Na uitloggen zijn afgeschermde onderdelen niet meer toegankelijk
 
 ## F-03: Vakken overzicht en detail
 

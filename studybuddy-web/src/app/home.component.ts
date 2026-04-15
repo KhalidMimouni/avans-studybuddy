@@ -7,7 +7,7 @@ import { AuthService } from './shared/auth.service';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-50">
+    <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-3xl mx-auto px-4 py-16 text-center">
         <h1 class="text-4xl font-bold text-gray-900 mb-4">StudyBuddy</h1>
         <p class="text-lg text-gray-600 mb-8">
