@@ -33,6 +33,10 @@ import { AuthService } from '../shared/auth.service';
                   </span>
                 }
                 @if (isOwner) {
+                  <a [routerLink]="['/study-groups', group.id, 'sessions', 'new']"
+                    class="text-xs bg-green-600 text-white px-3 py-1 rounded font-medium hover:bg-green-700">
+                    Sessie plannen
+                  </a>
                   <a [routerLink]="['/study-groups', group.id, 'edit']"
                     class="text-xs bg-blue-600 text-white px-3 py-1 rounded font-medium hover:bg-blue-700">
                     Wijzigen

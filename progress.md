@@ -71,15 +71,23 @@
 - [x] Niet-ingelogde gebruikers mogen deze acties niet uitvoeren
 - [x] Andere gebruikers mogen de studiegroep niet wijzigen of verwijderen
 
-## F-08: Studiesessies CRUD
+## F-08: Studiesessie aanmaken
 
-> Als eigenaar van een studiegroep wil ik studiesessies kunnen aanmaken, wijzigen en verwijderen, zodanig dat ik gezamenlijke leermomenten kan plannen en beheren.
+> Als eigenaar van een studiegroep wil ik een studiesessie kunnen aanmaken, zodanig dat ik gezamenlijke leermomenten kan plannen.
 
-- [ ] Alleen de eigenaar van de gekoppelde studiegroep mag sessies aanmaken, wijzigen of verwijderen
-- [ ] Bij aanmaken/wijzigen: titel, datum, begin- en eindtijd, status, notities
+- [x] Alleen de eigenaar van de gekoppelde studiegroep mag een studiesessie aanmaken
+- [x] Bij het aanmaken: titel, datum, begin- en eindtijd, status, notities
+- [x] De aangemaakte studiesessie wordt zichtbaar in het overzicht
+
+## F-09: Studiesessie wijzigen en verwijderen
+
+> Als eigenaar van een studiegroep wil ik studiesessies kunnen wijzigen en verwijderen, zodanig dat ik de planning actueel kan houden.
+
+- [ ] Alleen de eigenaar van de gekoppelde studiegroep mag sessies wijzigen of verwijderen
+- [ ] Niet-ingelogde gebruikers mogen deze acties niet uitvoeren
 - [ ] Een verwijderde sessie is niet meer zichtbaar in het overzicht
 
-## F-09: Aan- en afmelden voor sessie
+## F-10: Aan- en afmelden voor sessie
 
 > Als ingelogde gebruiker wil ik mij kunnen aan- en afmelden voor een studiesessie, zodanig dat ik kan deelnemen aan of afzien van deelname aan een sessie.
 
@@ -87,7 +95,7 @@
 - [ ] Een gebruiker mag zich maar een keer per sessie aanmelden
 - [ ] Na aanmelding is de gebruiker zichtbaar in de deelnemerslijst
 
-## F-10: Zoeken en filteren
+## F-11: Zoeken en filteren
 
 > Als gebruiker wil ik vakken, studiegroepen en studiesessies kunnen zoeken en filteren, zodanig dat ik snel relevante informatie kan vinden.
 
@@ -95,7 +103,7 @@
 - [ ] Filterresultaten worden direct zichtbaar in het overzicht
 - [ ] Filterfunctionaliteit beschikbaar over alle drie de domeinentiteiten
 
-## F-11: About-page
+## F-12: About-page
 
 > Als gebruiker wil ik een About-page kunnen bekijken, zodanig dat ik inzicht krijg in de casus, het datamodel en de functionaliteiten van de applicatie.
 
