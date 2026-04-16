@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StudySessionService } from './study-session.service';
 import { StudySession } from './study-session.model';
 import { AuthService } from '../shared/auth.service';
+import { EnrollmentService } from '../enrollments/enrollment.service';
 
 @Component({
   selector: 'app-study-session-detail',
@@ -93,6 +94,31 @@ import { AuthService } from '../shared/auth.service';
             }
           </div>
 
+          @if (auth.isLoggedIn() && !isOwner) {
+            <div class="bg-white rounded-lg shadow p-4 mb-6 flex items-center justify-between">
+              @if (enrolling) {
+                <p class="text-sm text-gray-500">Bezig...</p>
+              } @else if (isEnrolled) {
+                <p class="text-sm text-gray-700">Je bent aangemeld voor deze sessie.</p>
+                <button (click)="unenroll()"
+                  class="text-sm bg-red-600 text-white px-4 py-2 rounded font-medium hover:bg-red-700">
+                  Afmelden
+                </button>
+              } @else {
+                <p class="text-sm text-gray-700">Je bent nog niet aangemeld voor deze sessie.</p>
+                <button (click)="enroll()"
+                  class="text-sm bg-green-600 text-white px-4 py-2 rounded font-medium hover:bg-green-700">
+                  Aanmelden
+                </button>
+              }
+            </div>
+            @if (enrollError) {
+              <div class="mb-4 p-3 bg-red-50 text-red-700 rounded text-sm">
+                {{ enrollError }}
+              </div>
+            }
+          }
+
           @if (session.enrollments && session.enrollments.length > 0) {
             <h2 class="text-lg font-semibold text-gray-900 mb-3">
               Deelnemers ({{ session.enrollments.length }})
@@ -131,27 +157,70 @@ export class StudySessionDetailComponent implements OnInit {
   session: StudySession | null = null;
   loading = true;
   isOwner = false;
+  isEnrolled = false;
   deleting = false;
   deleteError = '';
+  enrolling = false;
+  enrollError = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private studySessionService: StudySessionService,
-    private auth: AuthService,
+    public auth: AuthService,
+    private enrollmentService: EnrollmentService,
   ) {}
 
   ngOnInit() {
+    this.loadSession();
+  }
+
+  private loadSession() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.studySessionService.findOne(id).subscribe({
       next: (data) => {
         this.session = data;
         const currentUser = this.auth.user();
         this.isOwner = !!currentUser && !!data.studyGroup?.owner && currentUser.id === data.studyGroup.owner.id;
+        this.isEnrolled = !!currentUser && !!data.enrollments?.some(e => e.user.id === currentUser.id);
         this.loading = false;
       },
       error: () => {
         this.loading = false;
+      },
+    });
+  }
+
+  enroll() {
+    if (!this.session) return;
+    this.enrolling = true;
+    this.enrollError = '';
+
+    this.enrollmentService.enroll(this.session.id).subscribe({
+      next: () => {
+        this.enrolling = false;
+        this.loadSession();
+      },
+      error: (err) => {
+        this.enrolling = false;
+        this.enrollError = err.error?.message || 'Aanmelden mislukt. Probeer het opnieuw.';
+      },
+    });
+  }
+
+  unenroll() {
+    if (!this.session) return;
+    this.enrolling = true;
+    this.enrollError = '';
+
+    this.enrollmentService.unenroll(this.session.id).subscribe({
+      next: () => {
+        this.enrolling = false;
+        this.loadSession();
+      },
+      error: (err) => {
+        this.enrolling = false;
+        this.enrollError = err.error?.message || 'Afmelden mislukt. Probeer het opnieuw.';
       },
     });
   }
