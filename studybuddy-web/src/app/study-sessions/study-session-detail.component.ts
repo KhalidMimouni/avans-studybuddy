@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StudySessionService } from './study-session.service';
@@ -163,12 +163,13 @@ export class StudySessionDetailComponent implements OnInit {
   enrolling = false;
   enrollError = '';
 
+  private enrollmentService = inject(EnrollmentService);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private studySessionService: StudySessionService,
     public auth: AuthService,
-    private enrollmentService: EnrollmentService,
   ) {}
 
   ngOnInit() {
