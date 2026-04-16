@@ -36,6 +36,16 @@ export const appRoutes: Route[] = [
       import('./study-groups/study-group-detail.component').then((m) => m.StudyGroupDetailComponent),
   },
   {
+    path: 'study-sessions',
+    loadComponent: () =>
+      import('./study-sessions/study-session-list.component').then((m) => m.StudySessionListComponent),
+  },
+  {
+    path: 'study-sessions/:id',
+    loadComponent: () =>
+      import('./study-sessions/study-session-detail.component').then((m) => m.StudySessionDetailComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () =>

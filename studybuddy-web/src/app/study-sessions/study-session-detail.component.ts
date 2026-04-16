@@ -1,0 +1,131 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { StudySessionService } from './study-session.service';
+import { StudySession } from './study-session.model';
+
+@Component({
+  selector: 'app-study-session-detail',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  template: `
+    <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
+      <div class="max-w-4xl mx-auto px-4 py-8">
+        <a routerLink="/study-sessions" class="text-sm text-blue-600 hover:underline mb-4 inline-block">
+          Terug naar studiesessies
+        </a>
+
+        @if (loading) {
+          <p class="text-gray-500">Studiesessie laden...</p>
+        } @else if (!session) {
+          <div class="bg-white rounded-lg shadow p-8 text-center">
+            <p class="text-gray-500">Studiesessie niet gevonden.</p>
+          </div>
+        } @else {
+          <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="flex items-start justify-between mb-2">
+              <h1 class="text-2xl font-bold text-gray-900">{{ session.title }}</h1>
+              <span class="text-xs px-2 py-0.5 rounded shrink-0 ml-3"
+                [class]="session.status === 'planned'
+                  ? 'bg-blue-100 text-blue-800'
+                  : session.status === 'completed'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-gray-100 text-gray-600'">
+                {{ session.status }}
+              </span>
+            </div>
+
+            @if (session.studyGroup) {
+              <a [routerLink]="['/study-groups', session.studyGroup.id]"
+                class="text-sm text-blue-600 hover:underline font-medium mb-4 inline-block">
+                {{ session.studyGroup.title }}
+              </a>
+            }
+
+            <div class="flex flex-wrap gap-6 text-sm text-gray-600 mt-4">
+              <div>
+                <span class="font-medium text-gray-900">Datum</span>
+                <p>{{ session.sessionDate | date:'d MMMM yyyy' }}</p>
+              </div>
+              <div>
+                <span class="font-medium text-gray-900">Tijdstip</span>
+                <p>{{ session.startTime | date:'HH:mm' }} - {{ session.endTime | date:'HH:mm' }}</p>
+              </div>
+              @if (session.studyGroup?.meetingLocation) {
+                <div>
+                  <span class="font-medium text-gray-900">Locatie</span>
+                  <p>{{ session.studyGroup?.meetingLocation }}</p>
+                </div>
+              }
+              @if (session.studyGroup?.owner) {
+                <div>
+                  <span class="font-medium text-gray-900">Eigenaar</span>
+                  <p>{{ session.studyGroup?.owner?.firstName }} {{ session.studyGroup?.owner?.lastName }}</p>
+                </div>
+              }
+            </div>
+
+            @if (session.notes) {
+              <div class="mt-6">
+                <span class="text-sm font-medium text-gray-900">Notities</span>
+                <p class="text-sm text-gray-700 mt-1">{{ session.notes }}</p>
+              </div>
+            }
+          </div>
+
+          @if (session.enrollments && session.enrollments.length > 0) {
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">
+              Deelnemers ({{ session.enrollments.length }})
+            </h2>
+            <div class="bg-white rounded-lg shadow divide-y divide-gray-100">
+              @for (enrollment of session.enrollments; track enrollment.id) {
+                <div class="flex items-center justify-between px-5 py-3">
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">
+                      {{ enrollment.user.firstName }} {{ enrollment.user.lastName }}
+                    </p>
+                    <p class="text-xs text-gray-500">{{ enrollment.user.email }}</p>
+                  </div>
+                  <span class="text-xs px-2 py-0.5 rounded"
+                    [class]="enrollment.attendanceStatus === 'confirmed'
+                      ? 'bg-green-100 text-green-800'
+                      : enrollment.attendanceStatus === 'cancelled'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-600'">
+                    {{ enrollment.attendanceStatus }}
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+              <p class="text-gray-500">Er zijn nog geen deelnemers voor deze sessie.</p>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  `,
+})
+export class StudySessionDetailComponent implements OnInit {
+  session: StudySession | null = null;
+  loading = true;
+
+  constructor(
+    private route: ActivatedRoute,
+    private studySessionService: StudySessionService,
+  ) {}
+
+  ngOnInit() {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.studySessionService.findOne(id).subscribe({
+      next: (data) => {
+        this.session = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
+  }
+}

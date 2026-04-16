@@ -64,7 +64,8 @@ import { StudyGroup } from './study-group.model';
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Studiesessies</h2>
             <div class="grid gap-3 sm:grid-cols-2">
               @for (session of group.studySessions; track session.id) {
-                <div class="bg-white rounded-lg shadow p-4">
+                <a [routerLink]="['/study-sessions', session.id]"
+                  class="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow block">
                   <div class="flex items-start justify-between mb-1">
                     <h3 class="font-medium text-gray-900">{{ session.title }}</h3>
                     <span class="text-xs px-2 py-0.5 rounded shrink-0 ml-2"
@@ -80,7 +81,7 @@ import { StudyGroup } from './study-group.model';
                     <span>{{ session.sessionDate | date:'d MMM yyyy' }}</span>
                     <span>{{ session.startTime | date:'HH:mm' }} - {{ session.endTime | date:'HH:mm' }}</span>
                   </div>
-                </div>
+                </a>
               }
             </div>
           } @else {
