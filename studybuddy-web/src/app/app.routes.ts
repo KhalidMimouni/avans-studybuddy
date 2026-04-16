@@ -31,6 +31,12 @@ export const appRoutes: Route[] = [
       import('./study-groups/study-group-list.component').then((m) => m.StudyGroupListComponent),
   },
   {
+    path: 'study-groups/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./study-groups/study-group-create.component').then((m) => m.StudyGroupCreateComponent),
+  },
+  {
     path: 'study-groups/:id',
     loadComponent: () =>
       import('./study-groups/study-group-detail.component').then((m) => m.StudyGroupDetailComponent),

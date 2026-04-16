@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StudyGroupService } from './study-group.service';
 import { StudyGroup } from './study-group.model';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-study-group-list',
@@ -11,7 +12,15 @@ import { StudyGroup } from './study-group.model';
   template: `
     <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-6xl mx-auto px-4 py-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-6">Studiegroepen</h1>
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-2xl font-bold text-gray-900">Studiegroepen</h1>
+          @if (auth.isLoggedIn()) {
+            <a routerLink="/study-groups/new"
+              class="text-sm bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
+              Nieuwe studiegroep
+            </a>
+          }
+        </div>
 
         @if (loading) {
           <p class="text-gray-500">Studiegroepen laden...</p>
@@ -65,7 +74,10 @@ export class StudyGroupListComponent implements OnInit {
   groups: StudyGroup[] = [];
   loading = true;
 
-  constructor(private studyGroupService: StudyGroupService) {}
+  constructor(
+    private studyGroupService: StudyGroupService,
+    public auth: AuthService,
+  ) {}
 
   ngOnInit() {
     this.studyGroupService.findAll().subscribe({

@@ -2,6 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { StudyGroup } from './study-group.model';
 
+export interface CreateStudyGroupPayload {
+  title: string;
+  description: string;
+  meetingLocation: string;
+  maxMembers: number;
+  courseId: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class StudyGroupService {
   constructor(private http: HttpClient) {}
@@ -16,5 +24,9 @@ export class StudyGroupService {
 
   findOne(id: number) {
     return this.http.get<StudyGroup>(`/api/study-groups/${id}`);
+  }
+
+  create(payload: CreateStudyGroupPayload) {
+    return this.http.post<StudyGroup>('/api/study-groups', payload);
   }
 }
