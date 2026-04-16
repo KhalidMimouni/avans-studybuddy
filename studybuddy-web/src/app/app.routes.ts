@@ -70,6 +70,11 @@ export const appRoutes: Route[] = [
       import('./study-sessions/study-session-detail.component').then((m) => m.StudySessionDetailComponent),
   },
   {
+    path: 'about',
+    loadComponent: () =>
+      import('./about/about.component').then((m) => m.AboutComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () =>

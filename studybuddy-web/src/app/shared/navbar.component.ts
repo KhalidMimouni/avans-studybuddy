@@ -23,6 +23,10 @@ import { AuthService } from './auth.service';
             class="text-sm text-gray-700 hover:text-gray-900 font-medium">
             Studiesessies
           </a>
+          <a routerLink="/about" routerLinkActive="text-blue-600"
+            class="text-sm text-gray-700 hover:text-gray-900 font-medium">
+            About
+          </a>
         </div>
 
         <div class="flex items-center gap-4">
