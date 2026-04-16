@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StudySessionService } from './study-session.service';
 import { StudySession } from './study-session.model';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-study-session-detail',
@@ -25,15 +26,34 @@ import { StudySession } from './study-session.model';
           <div class="bg-white rounded-lg shadow p-6 mb-6">
             <div class="flex items-start justify-between mb-2">
               <h1 class="text-2xl font-bold text-gray-900">{{ session.title }}</h1>
-              <span class="text-xs px-2 py-0.5 rounded shrink-0 ml-3"
-                [class]="session.status === 'planned'
-                  ? 'bg-blue-100 text-blue-800'
-                  : session.status === 'completed'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-600'">
-                {{ session.status }}
-              </span>
+              <div class="flex items-center gap-2 shrink-0 ml-3">
+                <span class="text-xs px-2 py-0.5 rounded"
+                  [class]="session.status === 'planned'
+                    ? 'bg-blue-100 text-blue-800'
+                    : session.status === 'completed'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-600'">
+                  {{ session.status }}
+                </span>
+                @if (isOwner) {
+                  <a [routerLink]="['/study-sessions', session.id, 'edit']"
+                    class="text-xs bg-blue-600 text-white px-3 py-1 rounded font-medium hover:bg-blue-700">
+                    Wijzigen
+                  </a>
+                  <button (click)="confirmDelete()"
+                    [disabled]="deleting"
+                    class="text-xs bg-red-600 text-white px-3 py-1 rounded font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ deleting ? 'Bezig...' : 'Verwijderen' }}
+                  </button>
+                }
+              </div>
             </div>
+
+            @if (deleteError) {
+              <div class="mb-4 p-3 bg-red-50 text-red-700 rounded text-sm">
+                {{ deleteError }}
+              </div>
+            }
 
             @if (session.studyGroup) {
               <a [routerLink]="['/study-groups', session.studyGroup.id]"
@@ -110,10 +130,15 @@ import { StudySession } from './study-session.model';
 export class StudySessionDetailComponent implements OnInit {
   session: StudySession | null = null;
   loading = true;
+  isOwner = false;
+  deleting = false;
+  deleteError = '';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private studySessionService: StudySessionService,
+    private auth: AuthService,
   ) {}
 
   ngOnInit() {
@@ -121,10 +146,33 @@ export class StudySessionDetailComponent implements OnInit {
     this.studySessionService.findOne(id).subscribe({
       next: (data) => {
         this.session = data;
+        const currentUser = this.auth.user();
+        this.isOwner = !!currentUser && !!data.studyGroup?.owner && currentUser.id === data.studyGroup.owner.id;
         this.loading = false;
       },
       error: () => {
         this.loading = false;
+      },
+    });
+  }
+
+  confirmDelete() {
+    if (!this.session) return;
+    if (!confirm(`Weet je zeker dat je "${this.session.title}" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.`)) {
+      return;
+    }
+
+    this.deleting = true;
+    this.deleteError = '';
+
+    this.studySessionService.remove(this.session.id).subscribe({
+      next: () => {
+        this.router.navigate(['/study-sessions']);
+      },
+      error: (err) => {
+        this.deleting = false;
+        this.deleteError =
+          err.error?.message || 'Verwijderen mislukt. Probeer het opnieuw.';
       },
     });
   }

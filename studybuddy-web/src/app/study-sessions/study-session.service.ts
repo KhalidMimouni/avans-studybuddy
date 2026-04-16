@@ -12,6 +12,15 @@ export interface CreateStudySessionPayload {
   studyGroupId: number;
 }
 
+export interface UpdateStudySessionPayload {
+  title?: string;
+  sessionDate?: string;
+  startTime?: string;
+  endTime?: string;
+  status?: string;
+  notes?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class StudySessionService {
   constructor(private http: HttpClient) {}
@@ -31,5 +40,13 @@ export class StudySessionService {
 
   create(payload: CreateStudySessionPayload) {
     return this.http.post<StudySession>('/api/study-sessions', payload);
+  }
+
+  update(id: number, payload: UpdateStudySessionPayload) {
+    return this.http.patch<StudySession>(`/api/study-sessions/${id}`, payload);
+  }
+
+  remove(id: number) {
+    return this.http.delete<void>(`/api/study-sessions/${id}`);
   }
 }
