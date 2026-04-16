@@ -87,7 +87,7 @@ import { Course } from '../courses/course.model';
                       : session.status === 'completed'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-600'">
-                    {{ session.status }}
+                    {{ statusLabels[session.status] || session.status }}
                   </span>
                 </div>
 
@@ -122,6 +122,12 @@ import { Course } from '../courses/course.model';
   `,
 })
 export class StudySessionListComponent implements OnInit, OnDestroy {
+  readonly statusLabels: Record<string, string> = {
+    planned: 'Gepland',
+    in_progress: 'Bezig',
+    completed: 'Afgerond',
+  };
+
   sessions: StudySession[] = [];
   courses: Course[] = [];
   loading = true;

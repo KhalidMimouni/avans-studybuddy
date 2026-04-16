@@ -34,7 +34,7 @@ import { EnrollmentService } from '../enrollments/enrollment.service';
                     : session.status === 'completed'
                       ? 'bg-green-100 text-green-800'
                       : 'bg-gray-100 text-gray-600'">
-                  {{ session.status }}
+                  {{ statusLabels[session.status] || session.status }}
                 </span>
                 @if (isOwner) {
                   <a [routerLink]="['/study-sessions', session.id, 'edit']"
@@ -138,7 +138,7 @@ import { EnrollmentService } from '../enrollments/enrollment.service';
                       : enrollment.attendanceStatus === 'cancelled'
                         ? 'bg-red-100 text-red-800'
                         : 'bg-gray-100 text-gray-600'">
-                    {{ enrollment.attendanceStatus }}
+                    {{ attendanceLabels[enrollment.attendanceStatus] || enrollment.attendanceStatus }}
                   </span>
                 </div>
               }
@@ -154,6 +154,17 @@ import { EnrollmentService } from '../enrollments/enrollment.service';
   `,
 })
 export class StudySessionDetailComponent implements OnInit {
+  readonly statusLabels: Record<string, string> = {
+    planned: 'Gepland',
+    in_progress: 'Bezig',
+    completed: 'Afgerond',
+  };
+  readonly attendanceLabels: Record<string, string> = {
+    registered: 'Aangemeld',
+    confirmed: 'Bevestigd',
+    cancelled: 'Geannuleerd',
+  };
+
   session: StudySession | null = null;
   loading = true;
   isOwner = false;

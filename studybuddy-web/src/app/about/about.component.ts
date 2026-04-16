@@ -68,11 +68,11 @@ const ERD_DEFINITION = `erDiagram
         datetime updatedAt
     }
 
-    User ||--o{ StudyGroup : "owns"
-    Course ||--o{ StudyGroup : "has"
-    StudyGroup ||--o{ StudySession : "contains"
-    User ||--o{ Enrollment : "has"
-    StudySession ||--o{ Enrollment : "has"
+    User ||--o{ StudyGroup : ""
+    Course ||--o{ StudyGroup : ""
+    StudyGroup ||--o{ StudySession : ""
+    User ||--o{ Enrollment : ""
+    StudySession ||--o{ Enrollment : ""
 `;
 
 interface FunctionalRequirement {
@@ -246,7 +246,7 @@ const FUNCTIONAL_REQUIREMENTS: FunctionalRequirement[] = [
           <p class="text-gray-700 leading-relaxed">
             Het domeinmodel bestaat uit vijf entiteiten: <strong>User</strong>,
             <strong>Course</strong>, <strong>StudyGroup</strong>, <strong>StudySession</strong> en
-            <strong>Enrollment</strong>. Enrollment fungeert als koppeltabel (zwakke entiteit)
+            <strong>Enrollment</strong>. Enrollment functioneert als koppeltabel (zwakke entiteit)
             tussen User en StudySession en maakt de N:M-relatie mogelijk.
           </p>
         </section>

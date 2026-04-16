@@ -98,7 +98,7 @@ import { AuthService } from '../shared/auth.service';
                         : session.status === 'completed'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-gray-100 text-gray-600'">
-                      {{ session.status }}
+                      {{ statusLabels[session.status] || session.status }}
                     </span>
                   </div>
                   <div class="flex gap-4 text-xs text-gray-500 mt-2">
@@ -119,6 +119,12 @@ import { AuthService } from '../shared/auth.service';
   `,
 })
 export class StudyGroupDetailComponent implements OnInit {
+  readonly statusLabels: Record<string, string> = {
+    planned: 'Gepland',
+    in_progress: 'Bezig',
+    completed: 'Afgerond',
+  };
+
   group: StudyGroup | null = null;
   loading = true;
   isOwner = false;

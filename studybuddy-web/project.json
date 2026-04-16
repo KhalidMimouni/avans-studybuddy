@@ -12,6 +12,7 @@
       "options": {
         "outputPath": "dist/studybuddy-web",
         "browser": "studybuddy-web/src/main.ts",
+        "polyfills": ["zone.js"],
         "tsConfig": "studybuddy-web/tsconfig.app.json",
         "assets": [
           {
