@@ -26,6 +26,16 @@ export const appRoutes: Route[] = [
       import('./courses/course-detail.component').then((m) => m.CourseDetailComponent),
   },
   {
+    path: 'study-groups',
+    loadComponent: () =>
+      import('./study-groups/study-group-list.component').then((m) => m.StudyGroupListComponent),
+  },
+  {
+    path: 'study-groups/:id',
+    loadComponent: () =>
+      import('./study-groups/study-group-detail.component').then((m) => m.StudyGroupDetailComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () =>

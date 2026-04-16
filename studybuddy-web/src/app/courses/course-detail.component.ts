@@ -52,14 +52,15 @@ import { Course } from './course.model';
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Studiegroepen</h2>
             <div class="grid gap-3 sm:grid-cols-2">
               @for (group of course.studyGroups; track group.id) {
-                <div class="bg-white rounded-lg shadow p-4">
+                <a [routerLink]="['/study-groups', group.id]"
+                  class="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow block">
                   <h3 class="font-medium text-gray-900 mb-1">{{ group.title }}</h3>
                   <p class="text-sm text-gray-500 line-clamp-2 mb-2">{{ group.description }}</p>
                   <div class="flex gap-4 text-xs text-gray-500">
                     <span>{{ group.meetingLocation }}</span>
                     <span>Max {{ group.maxMembers }} leden</span>
                   </div>
-                </div>
+                </a>
               }
             </div>
           } @else {
