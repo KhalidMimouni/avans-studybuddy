@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StudyGroupService } from './study-group.service';
-import { StudyGroup } from './study-group.model';
+import { StudyGroup, StudyGroupSession } from './study-group.model';
 import { AuthService } from '../shared/auth.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { AuthService } from '../shared/auth.service';
   template: `
     <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-4xl mx-auto px-4 py-8">
-        <a routerLink="/study-groups" class="text-sm text-blue-600 hover:underline mb-4 inline-block">
+        <a routerLink="/study-groups" class="text-sm text-red-600 hover:underline mb-4 inline-block">
           Terug naar studiegroepen
         </a>
 
@@ -38,7 +38,7 @@ import { AuthService } from '../shared/auth.service';
                     Sessie plannen
                   </a>
                   <a [routerLink]="['/study-groups', group.id, 'edit']"
-                    class="text-xs bg-blue-600 text-white px-3 py-1 rounded font-medium hover:bg-blue-700">
+                    class="text-xs bg-red-600 text-white px-3 py-1 rounded font-medium hover:bg-red-700">
                     Wijzigen
                   </a>
                   <button (click)="confirmDelete()"
@@ -58,7 +58,7 @@ import { AuthService } from '../shared/auth.service';
 
             @if (group.course) {
               <a [routerLink]="['/courses', group.course.id]"
-                class="text-sm text-blue-600 hover:underline font-medium mb-4 inline-block">
+                class="text-sm text-red-600 hover:underline font-medium mb-4 inline-block">
                 {{ group.course.name }}
                 <span class="text-gray-400 font-normal">{{ group.course.code }}</span>
               </a>
@@ -93,12 +93,8 @@ import { AuthService } from '../shared/auth.service';
                   <div class="flex items-start justify-between mb-1">
                     <h3 class="font-medium text-gray-900">{{ session.title }}</h3>
                     <span class="text-xs px-2 py-0.5 rounded shrink-0 ml-2"
-                      [class]="session.status === 'planned'
-                        ? 'bg-blue-100 text-blue-800'
-                        : session.status === 'completed'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-600'">
-                      {{ statusLabels[session.status] || session.status }}
+                      [class]="statusClasses[computeStatus(session)] || 'bg-gray-100 text-gray-600'">
+                      {{ statusLabels[computeStatus(session)] }}
                     </span>
                   </div>
                   <div class="flex gap-4 text-xs text-gray-500 mt-2">
@@ -123,6 +119,13 @@ export class StudyGroupDetailComponent implements OnInit {
     planned: 'Gepland',
     in_progress: 'Bezig',
     completed: 'Afgerond',
+    cancelled: 'Geannuleerd',
+  };
+  readonly statusClasses: Record<string, string> = {
+    planned: 'bg-blue-100 text-blue-800',
+    in_progress: 'bg-yellow-100 text-yellow-800',
+    completed: 'bg-green-100 text-green-800',
+    cancelled: 'bg-red-100 text-red-800',
   };
 
   group: StudyGroup | null = null;
@@ -151,6 +154,16 @@ export class StudyGroupDetailComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  computeStatus(session: StudyGroupSession): string {
+    if (session.status === 'cancelled') return 'cancelled';
+    const now = new Date();
+    const end = new Date(session.endTime);
+    const start = new Date(session.startTime);
+    if (now > end) return 'completed';
+    if (now >= start && now <= end) return 'in_progress';
+    return 'planned';
   }
 
   confirmDelete() {

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { CourseService } from './course.service';
 import { Course } from './course.model';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-course-list',
@@ -13,7 +14,15 @@ import { Course } from './course.model';
   template: `
     <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-6xl mx-auto px-4 py-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-6">Vakken</h1>
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-2xl font-bold text-gray-900">Vakken</h1>
+          @if (auth.isLoggedIn()) {
+            <a routerLink="/courses/new"
+              class="text-sm bg-red-600 text-white px-4 py-2 rounded font-medium hover:bg-red-700">
+              Vak aanmaken
+            </a>
+          }
+        </div>
 
         <div class="bg-white rounded-lg shadow p-4 mb-6">
           <div class="grid gap-3 sm:grid-cols-3">
@@ -23,7 +32,7 @@ import { Course } from './course.model';
                 id="search"
                 type="text"
                 placeholder="Naam of code..."
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 [ngModel]="searchTerm"
                 (ngModelChange)="onSearchChange($event)" />
             </div>
@@ -31,7 +40,7 @@ import { Course } from './course.model';
               <label for="studyYear" class="block text-xs font-medium text-gray-500 mb-1">Studiejaar</label>
               <select
                 id="studyYear"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 bg-white"
                 [(ngModel)]="selectedStudyYear"
                 (ngModelChange)="applyFilters()">
                 <option [ngValue]="undefined">Alle jaren</option>
@@ -45,7 +54,7 @@ import { Course } from './course.model';
               <label for="semester" class="block text-xs font-medium text-gray-500 mb-1">Semester</label>
               <select
                 id="semester"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 bg-white"
                 [(ngModel)]="selectedSemester"
                 (ngModelChange)="applyFilters()">
                 <option [ngValue]="undefined">Alle semesters</option>
@@ -59,7 +68,7 @@ import { Course } from './course.model';
               <span class="text-xs text-gray-500">{{ filteredCount }} resultaten</span>
               <button
                 (click)="clearFilters()"
-                class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                class="text-xs text-red-600 hover:text-red-800 font-medium">
                 Filters wissen
               </button>
             </div>
@@ -112,7 +121,7 @@ export class CourseListComponent implements OnInit, OnDestroy {
   private search$ = new Subject<string>();
   private destroy$ = new Subject<void>();
 
-  constructor(private courseService: CourseService) {}
+  constructor(private courseService: CourseService, public auth: AuthService) {}
 
   ngOnInit() {
     this.search$

@@ -25,7 +25,7 @@ import { Course } from '../courses/course.model';
                 id="search"
                 type="text"
                 placeholder="Titel..."
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 [ngModel]="searchTerm"
                 (ngModelChange)="onSearchChange($event)" />
             </div>
@@ -33,7 +33,7 @@ import { Course } from '../courses/course.model';
               <label for="course" class="block text-xs font-medium text-gray-500 mb-1">Vak</label>
               <select
                 id="course"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 bg-white"
                 [(ngModel)]="selectedCourseId"
                 (ngModelChange)="applyFilters()">
                 <option [ngValue]="undefined">Alle vakken</option>
@@ -47,7 +47,7 @@ import { Course } from '../courses/course.model';
               <input
                 id="date"
                 type="date"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 [(ngModel)]="selectedDate"
                 (ngModelChange)="applyFilters()" />
             </div>
@@ -57,7 +57,7 @@ import { Course } from '../courses/course.model';
               <span class="text-xs text-gray-500">{{ filteredCount }} resultaten</span>
               <button
                 (click)="clearFilters()"
-                class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                class="text-xs text-red-600 hover:text-red-800 font-medium">
                 Filters wissen
               </button>
             </div>
@@ -82,17 +82,13 @@ import { Course } from '../courses/course.model';
                 <div class="flex items-start justify-between mb-1">
                   <h2 class="text-lg font-semibold text-gray-900">{{ session.title }}</h2>
                   <span class="text-xs px-2 py-0.5 rounded shrink-0 ml-2"
-                    [class]="session.status === 'planned'
-                      ? 'bg-blue-100 text-blue-800'
-                      : session.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-600'">
-                    {{ statusLabels[session.status] || session.status }}
+                    [class]="statusClasses[computeStatus(session)] || 'bg-gray-100 text-gray-600'">
+                    {{ statusLabels[computeStatus(session)] }}
                   </span>
                 </div>
 
                 @if (session.studyGroup) {
-                  <p class="text-sm text-blue-600 font-medium mb-2">
+                  <p class="text-sm text-red-600 font-medium mb-2">
                     {{ session.studyGroup.title }}
                   </p>
                 }
@@ -126,6 +122,13 @@ export class StudySessionListComponent implements OnInit, OnDestroy {
     planned: 'Gepland',
     in_progress: 'Bezig',
     completed: 'Afgerond',
+    cancelled: 'Geannuleerd',
+  };
+  readonly statusClasses: Record<string, string> = {
+    planned: 'bg-blue-100 text-blue-800',
+    in_progress: 'bg-yellow-100 text-yellow-800',
+    completed: 'bg-green-100 text-green-800',
+    cancelled: 'bg-red-100 text-red-800',
   };
 
   sessions: StudySession[] = [];
@@ -189,6 +192,16 @@ export class StudySessionListComponent implements OnInit, OnDestroy {
 
   hasActiveFilters(): boolean {
     return !!this.searchTerm || this.selectedCourseId !== undefined || !!this.selectedDate;
+  }
+
+  computeStatus(session: StudySession): string {
+    if (session.status === 'cancelled') return 'cancelled';
+    const now = new Date();
+    const end = new Date(session.endTime);
+    const start = new Date(session.startTime);
+    if (now > end) return 'completed';
+    if (now >= start && now <= end) return 'in_progress';
+    return 'planned';
   }
 
   clearFilters() {

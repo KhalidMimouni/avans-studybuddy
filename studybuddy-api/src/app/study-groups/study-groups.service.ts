@@ -37,6 +37,14 @@ export class StudyGroupsService {
     return qb.orderBy('sg.createdAt', 'DESC').getMany();
   }
 
+  findByOwner(userId: number) {
+    return this.repo.find({
+      where: { ownerId: userId },
+      relations: ['course', 'studySessions'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findOne(id: number) {
     const group = await this.repo.findOne({
       where: { id },

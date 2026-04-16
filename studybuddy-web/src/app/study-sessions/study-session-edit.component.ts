@@ -22,12 +22,12 @@ import { AuthService } from '../shared/auth.service';
       <div class="max-w-2xl mx-auto px-4 py-8">
         @if (session) {
           <a [routerLink]="['/study-sessions', session.id]"
-            class="text-sm text-blue-600 hover:underline mb-4 inline-block">
+            class="text-sm text-red-600 hover:underline mb-4 inline-block">
             Terug naar studiesessie
           </a>
         } @else {
           <a routerLink="/study-sessions"
-            class="text-sm text-blue-600 hover:underline mb-4 inline-block">
+            class="text-sm text-red-600 hover:underline mb-4 inline-block">
             Terug naar studiesessies
           </a>
         }
@@ -60,7 +60,7 @@ import { AuthService } from '../shared/auth.service';
               <div class="mb-4">
                 <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titel</label>
                 <input id="title" formControlName="title" type="text"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
                 @if (form.get('title')?.touched && form.get('title')?.hasError('required')) {
                   <p class="text-red-600 text-xs mt-1">Verplicht</p>
                 }
@@ -69,9 +69,12 @@ import { AuthService } from '../shared/auth.service';
               <div class="mb-4">
                 <label for="sessionDate" class="block text-sm font-medium text-gray-700 mb-1">Datum</label>
                 <input id="sessionDate" formControlName="sessionDate" type="date"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
                 @if (form.get('sessionDate')?.touched && form.get('sessionDate')?.hasError('required')) {
                   <p class="text-red-600 text-xs mt-1">Verplicht</p>
+                }
+                @if (form.hasError('dateInPast')) {
+                  <p class="text-red-600 text-xs mt-1">Datum mag niet in het verleden liggen</p>
                 }
               </div>
 
@@ -79,7 +82,7 @@ import { AuthService } from '../shared/auth.service';
                 <div>
                   <label for="startTime" class="block text-sm font-medium text-gray-700 mb-1">Begintijd</label>
                   <input id="startTime" formControlName="startTime" type="time"
-                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
                   @if (form.get('startTime')?.touched && form.get('startTime')?.hasError('required')) {
                     <p class="text-red-600 text-xs mt-1">Verplicht</p>
                   }
@@ -87,7 +90,7 @@ import { AuthService } from '../shared/auth.service';
                 <div>
                   <label for="endTime" class="block text-sm font-medium text-gray-700 mb-1">Eindtijd</label>
                   <input id="endTime" formControlName="endTime" type="time"
-                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
                   @if (form.get('endTime')?.touched && form.get('endTime')?.hasError('required')) {
                     <p class="text-red-600 text-xs mt-1">Verplicht</p>
                   }
@@ -101,10 +104,8 @@ import { AuthService } from '../shared/auth.service';
               <div class="mb-4">
                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select id="status" formControlName="status"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
                   <option value="planned">Gepland</option>
-                  <option value="in_progress">Bezig</option>
-                  <option value="completed">Afgerond</option>
                   <option value="cancelled">Geannuleerd</option>
                 </select>
               </div>
@@ -112,12 +113,12 @@ import { AuthService } from '../shared/auth.service';
               <div class="mb-6">
                 <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notities</label>
                 <textarea id="notes" formControlName="notes" rows="3"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
                   placeholder="Optioneel: onderwerpen, materiaal, afspraken..."></textarea>
               </div>
 
               <button type="submit" [disabled]="form.invalid || form.pristine || submitting"
-                class="w-full bg-blue-600 text-white py-2 px-4 rounded font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                class="w-full bg-red-600 text-white py-2 px-4 rounded font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ submitting ? 'Bezig...' : 'Wijzigingen opslaan' }}
               </button>
             </form>
@@ -151,7 +152,7 @@ export class StudySessionEditComponent implements OnInit {
         status: ['planned'],
         notes: [''],
       },
-      { validators: [this.endAfterStartValidator] },
+      { validators: [this.endAfterStartValidator, this.notInPastValidator] },
     );
   }
 
@@ -229,6 +230,17 @@ export class StudySessionEditComponent implements OnInit {
     const end = group.get('endTime')?.value;
     if (start && end && end <= start) {
       return { endBeforeStart: true };
+    }
+    return null;
+  }
+
+  private notInPastValidator(group: AbstractControl): ValidationErrors | null {
+    const date = group.get('sessionDate')?.value;
+    if (!date) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (new Date(date) < today) {
+      return { dateInPast: true };
     }
     return null;
   }

@@ -18,7 +18,7 @@ import { Course } from '../courses/course.model';
   template: `
     <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-2xl mx-auto px-4 py-8">
-        <a routerLink="/study-groups" class="text-sm text-blue-600 hover:underline mb-4 inline-block">
+        <a routerLink="/study-groups" class="text-sm text-red-600 hover:underline mb-4 inline-block">
           Terug naar studiegroepen
         </a>
 
@@ -35,7 +35,7 @@ import { Course } from '../courses/course.model';
             <div class="mb-4">
               <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titel</label>
               <input id="title" formControlName="title" type="text"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
               @if (form.get('title')?.touched && form.get('title')?.hasError('required')) {
                 <p class="text-red-600 text-xs mt-1">Verplicht</p>
               }
@@ -44,7 +44,7 @@ import { Course } from '../courses/course.model';
             <div class="mb-4">
               <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Beschrijving</label>
               <textarea id="description" formControlName="description" rows="3"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
               @if (form.get('description')?.touched && form.get('description')?.hasError('required')) {
                 <p class="text-red-600 text-xs mt-1">Verplicht</p>
               }
@@ -56,7 +56,7 @@ import { Course } from '../courses/course.model';
                 <p class="text-sm text-gray-400">Vakken laden...</p>
               } @else {
                 <select id="courseId" formControlName="courseId"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
                   <option value="" disabled>Kies een vak</option>
                   @for (course of courses; track course.id) {
                     <option [value]="course.id">{{ course.name }} ({{ course.code }})</option>
@@ -72,7 +72,7 @@ import { Course } from '../courses/course.model';
               <div>
                 <label for="meetingLocation" class="block text-sm font-medium text-gray-700 mb-1">Locatie</label>
                 <input id="meetingLocation" formControlName="meetingLocation" type="text"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
                 @if (form.get('meetingLocation')?.touched && form.get('meetingLocation')?.hasError('required')) {
                   <p class="text-red-600 text-xs mt-1">Verplicht</p>
                 }
@@ -80,7 +80,7 @@ import { Course } from '../courses/course.model';
               <div>
                 <label for="maxMembers" class="block text-sm font-medium text-gray-700 mb-1">Max leden</label>
                 <input id="maxMembers" formControlName="maxMembers" type="number" min="2"
-                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" />
                 @if (form.get('maxMembers')?.touched && form.get('maxMembers')?.hasError('required')) {
                   <p class="text-red-600 text-xs mt-1">Verplicht</p>
                 }
@@ -91,7 +91,7 @@ import { Course } from '../courses/course.model';
             </div>
 
             <button type="submit" [disabled]="form.invalid || submitting"
-              class="w-full bg-blue-600 text-white py-2 px-4 rounded font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              class="w-full bg-red-600 text-white py-2 px-4 rounded font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
               {{ submitting ? 'Bezig...' : 'Studiegroep aanmaken' }}
             </button>
           </form>

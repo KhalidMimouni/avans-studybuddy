@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseService } from './course.service';
 import { Course } from './course.model';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-course-detail',
@@ -11,7 +12,7 @@ import { Course } from './course.model';
   template: `
     <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-4xl mx-auto px-4 py-8">
-        <a routerLink="/courses" class="text-sm text-blue-600 hover:underline mb-4 inline-block">
+        <a routerLink="/courses" class="text-sm text-red-600 hover:underline mb-4 inline-block">
           Terug naar vakken
         </a>
 
@@ -25,10 +26,29 @@ import { Course } from './course.model';
           <div class="bg-white rounded-lg shadow p-6 mb-6">
             <div class="flex items-start justify-between mb-4">
               <h1 class="text-2xl font-bold text-gray-900">{{ course.name }}</h1>
-              <span class="text-sm font-mono bg-gray-100 text-gray-600 px-3 py-1 rounded shrink-0 ml-3">
-                {{ course.code }}
-              </span>
+              <div class="flex items-center gap-2 shrink-0 ml-3">
+                <span class="text-sm font-mono bg-gray-100 text-gray-600 px-3 py-1 rounded">
+                  {{ course.code }}
+                </span>
+                @if (auth.isLoggedIn()) {
+                  <a [routerLink]="['/courses', course.id, 'edit']"
+                    class="text-xs bg-red-600 text-white px-3 py-1 rounded font-medium hover:bg-red-700">
+                    Wijzigen
+                  </a>
+                  <button (click)="confirmDelete()"
+                    [disabled]="deleting"
+                    class="text-xs bg-red-600 text-white px-3 py-1 rounded font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ deleting ? 'Bezig...' : 'Verwijderen' }}
+                  </button>
+                }
+              </div>
             </div>
+
+            @if (deleteError) {
+              <div class="mb-4 p-3 bg-red-50 text-red-700 rounded text-sm">
+                {{ deleteError }}
+              </div>
+            }
 
             <p class="text-gray-700 mb-6">{{ course.description }}</p>
 
@@ -76,10 +96,14 @@ import { Course } from './course.model';
 export class CourseDetailComponent implements OnInit {
   course: Course | null = null;
   loading = true;
+  deleting = false;
+  deleteError = '';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private courseService: CourseService,
+    public auth: AuthService,
   ) {}
 
   ngOnInit() {
@@ -91,6 +115,27 @@ export class CourseDetailComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+      },
+    });
+  }
+
+  confirmDelete() {
+    if (!this.course) return;
+    if (!confirm(`Weet je zeker dat je "${this.course.name}" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.`)) {
+      return;
+    }
+
+    this.deleting = true;
+    this.deleteError = '';
+
+    this.courseService.remove(this.course.id).subscribe({
+      next: () => {
+        this.router.navigate(['/courses']);
+      },
+      error: (err) => {
+        this.deleting = false;
+        this.deleteError =
+          err.error?.message || 'Verwijderen mislukt. Probeer het opnieuw.';
       },
     });
   }

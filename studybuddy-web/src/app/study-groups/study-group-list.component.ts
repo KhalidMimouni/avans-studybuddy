@@ -20,7 +20,7 @@ import { AuthService } from '../shared/auth.service';
           <h1 class="text-2xl font-bold text-gray-900">Studiegroepen</h1>
           @if (auth.isLoggedIn()) {
             <a routerLink="/study-groups/new"
-              class="text-sm bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700">
+              class="text-sm bg-red-600 text-white px-4 py-2 rounded font-medium hover:bg-red-700">
               Nieuwe studiegroep
             </a>
           }
@@ -34,7 +34,7 @@ import { AuthService } from '../shared/auth.service';
                 id="search"
                 type="text"
                 placeholder="Titel of locatie..."
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
                 [ngModel]="searchTerm"
                 (ngModelChange)="onSearchChange($event)" />
             </div>
@@ -42,7 +42,7 @@ import { AuthService } from '../shared/auth.service';
               <label for="course" class="block text-xs font-medium text-gray-500 mb-1">Vak</label>
               <select
                 id="course"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 bg-white"
                 [(ngModel)]="selectedCourseId"
                 (ngModelChange)="applyFilters()">
                 <option [ngValue]="undefined">Alle vakken</option>
@@ -55,7 +55,7 @@ import { AuthService } from '../shared/auth.service';
               <label for="studyYear" class="block text-xs font-medium text-gray-500 mb-1">Studiejaar</label>
               <select
                 id="studyYear"
-                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500 bg-white"
                 [(ngModel)]="selectedStudyYear"
                 (ngModelChange)="applyFilters()">
                 <option [ngValue]="undefined">Alle jaren</option>
@@ -71,7 +71,7 @@ import { AuthService } from '../shared/auth.service';
               <span class="text-xs text-gray-500">{{ filteredCount }} resultaten</span>
               <button
                 (click)="clearFilters()"
-                class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                class="text-xs text-red-600 hover:text-red-800 font-medium">
                 Filters wissen
               </button>
             </div>
@@ -96,7 +96,7 @@ import { AuthService } from '../shared/auth.service';
                 <h2 class="text-lg font-semibold text-gray-900 mb-1">{{ group.title }}</h2>
 
                 @if (group.course) {
-                  <p class="text-sm text-blue-600 font-medium mb-2">
+                  <p class="text-sm text-red-600 font-medium mb-2">
                     {{ group.course.name }}
                     <span class="text-gray-400 font-normal">{{ group.course.code }}</span>
                   </p>

@@ -21,7 +21,7 @@ import { AuthService } from './shared/auth.service';
         } @else {
           <div class="flex gap-4 justify-center">
             <a routerLink="/register"
-              class="bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700">
+              class="bg-red-600 text-white px-6 py-2 rounded font-medium hover:bg-red-700">
               Account aanmaken
             </a>
             <a routerLink="/login"

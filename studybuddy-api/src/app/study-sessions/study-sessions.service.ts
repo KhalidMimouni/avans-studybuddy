@@ -51,9 +51,11 @@ export class StudySessionsService {
   async create(dto: CreateStudySessionDto, userId: number) {
     await this.verifyGroupOwner(dto.studyGroupId, userId);
     this.validateTimes(dto.startTime, dto.endTime);
+    this.validateNotInPast(dto.sessionDate);
 
     const session = this.repo.create({
       ...dto,
+      status: 'planned',
       sessionDate: new Date(dto.sessionDate),
       startTime: new Date(dto.startTime),
       endTime: new Date(dto.endTime),
@@ -100,7 +102,17 @@ export class StudySessionsService {
 
   private validateTimes(start: string, end: string) {
     if (new Date(end) <= new Date(start)) {
-      throw new BadRequestException('End time must be after start time');
+      throw new BadRequestException('Eindtijd moet na begintijd liggen');
+    }
+  }
+
+  private validateNotInPast(dateStr: string) {
+    const sessionDate = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    sessionDate.setHours(0, 0, 0, 0);
+    if (sessionDate < today) {
+      throw new BadRequestException('Datum mag niet in het verleden liggen');
     }
   }
 }
