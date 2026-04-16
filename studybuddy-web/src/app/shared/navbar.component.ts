@@ -11,6 +11,10 @@ import { AuthService } from './auth.service';
       <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
         <div class="flex items-center gap-6">
           <a routerLink="/" class="text-lg font-bold text-gray-900">StudyBuddy</a>
+          <a routerLink="/courses" routerLinkActive="text-blue-600"
+            class="text-sm text-gray-700 hover:text-gray-900 font-medium">
+            Vakken
+          </a>
         </div>
 
         <div class="flex items-center gap-4">

@@ -35,9 +35,9 @@
 
 > Als gebruiker wil ik een lijst van vakken kunnen bekijken en een detailpagina van een vak kunnen openen, zodanig dat ik relevante vakinformatie kan terugvinden.
 
-- [ ] Overzichtspagina met vakken
-- [ ] Per vak minimaal naam, code, studiejaar en semester zichtbaar
-- [ ] Vanuit het overzicht navigeren naar een detailpagina van een vak
+- [x] Overzichtspagina met vakken
+- [x] Per vak minimaal naam, code, studiejaar en semester zichtbaar
+- [x] Vanuit het overzicht navigeren naar een detailpagina van een vak
 
 ## F-04: Studiegroepen overzicht en detail
 

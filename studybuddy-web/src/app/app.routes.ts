@@ -16,6 +16,16 @@ export const appRoutes: Route[] = [
       import('./auth/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'courses',
+    loadComponent: () =>
+      import('./courses/course-list.component').then((m) => m.CourseListComponent),
+  },
+  {
+    path: 'courses/:id',
+    loadComponent: () =>
+      import('./courses/course-detail.component').then((m) => m.CourseDetailComponent),
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () =>
