@@ -10,6 +10,14 @@ export interface CreateStudyGroupPayload {
   courseId: number;
 }
 
+export interface UpdateStudyGroupPayload {
+  title?: string;
+  description?: string;
+  meetingLocation?: string;
+  maxMembers?: number;
+  isPrivate?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class StudyGroupService {
   constructor(private http: HttpClient) {}
@@ -28,5 +36,13 @@ export class StudyGroupService {
 
   create(payload: CreateStudyGroupPayload) {
     return this.http.post<StudyGroup>('/api/study-groups', payload);
+  }
+
+  update(id: number, payload: UpdateStudyGroupPayload) {
+    return this.http.patch<StudyGroup>(`/api/study-groups/${id}`, payload);
+  }
+
+  remove(id: number) {
+    return this.http.delete<void>(`/api/study-groups/${id}`);
   }
 }

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StudyGroupService } from './study-group.service';
 import { StudyGroup } from './study-group.model';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-study-group-detail',
@@ -25,12 +26,31 @@ import { StudyGroup } from './study-group.model';
           <div class="bg-white rounded-lg shadow p-6 mb-6">
             <div class="flex items-start justify-between mb-2">
               <h1 class="text-2xl font-bold text-gray-900">{{ group.title }}</h1>
-              @if (group.isPrivate) {
-                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded shrink-0 ml-3">
-                  Prive
-                </span>
-              }
+              <div class="flex items-center gap-2 shrink-0 ml-3">
+                @if (group.isPrivate) {
+                  <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
+                    Prive
+                  </span>
+                }
+                @if (isOwner) {
+                  <a [routerLink]="['/study-groups', group.id, 'edit']"
+                    class="text-xs bg-blue-600 text-white px-3 py-1 rounded font-medium hover:bg-blue-700">
+                    Wijzigen
+                  </a>
+                  <button (click)="confirmDelete()"
+                    [disabled]="deleting"
+                    class="text-xs bg-red-600 text-white px-3 py-1 rounded font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ deleting ? 'Bezig...' : 'Verwijderen' }}
+                  </button>
+                }
+              </div>
             </div>
+
+            @if (deleteError) {
+              <div class="mb-4 p-3 bg-red-50 text-red-700 rounded text-sm">
+                {{ deleteError }}
+              </div>
+            }
 
             @if (group.course) {
               <a [routerLink]="['/courses', group.course.id]"
@@ -97,10 +117,15 @@ import { StudyGroup } from './study-group.model';
 export class StudyGroupDetailComponent implements OnInit {
   group: StudyGroup | null = null;
   loading = true;
+  isOwner = false;
+  deleting = false;
+  deleteError = '';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private studyGroupService: StudyGroupService,
+    private auth: AuthService,
   ) {}
 
   ngOnInit() {
@@ -108,10 +133,33 @@ export class StudyGroupDetailComponent implements OnInit {
     this.studyGroupService.findOne(id).subscribe({
       next: (data) => {
         this.group = data;
+        const currentUser = this.auth.user();
+        this.isOwner = !!currentUser && currentUser.id === data.ownerId;
         this.loading = false;
       },
       error: () => {
         this.loading = false;
+      },
+    });
+  }
+
+  confirmDelete() {
+    if (!this.group) return;
+    if (!confirm(`Weet je zeker dat je "${this.group.title}" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.`)) {
+      return;
+    }
+
+    this.deleting = true;
+    this.deleteError = '';
+
+    this.studyGroupService.remove(this.group.id).subscribe({
+      next: () => {
+        this.router.navigate(['/study-groups']);
+      },
+      error: (err) => {
+        this.deleting = false;
+        this.deleteError =
+          err.error?.message || 'Verwijderen mislukt. Probeer het opnieuw.';
       },
     });
   }

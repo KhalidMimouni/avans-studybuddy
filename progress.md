@@ -67,9 +67,9 @@
 
 > Als eigenaar van een studiegroep wil ik mijn eigen studiegroep kunnen wijzigen en verwijderen, zodanig dat ik de inhoud actueel kan houden.
 
-- [ ] Alleen de eigenaar mag de studiegroep wijzigen of verwijderen
-- [ ] Niet-ingelogde gebruikers mogen deze acties niet uitvoeren
-- [ ] Andere gebruikers mogen de studiegroep niet wijzigen of verwijderen
+- [x] Alleen de eigenaar mag de studiegroep wijzigen of verwijderen
+- [x] Niet-ingelogde gebruikers mogen deze acties niet uitvoeren
+- [x] Andere gebruikers mogen de studiegroep niet wijzigen of verwijderen
 
 ## F-08: Studiesessies CRUD
 
