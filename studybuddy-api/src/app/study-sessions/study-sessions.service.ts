@@ -17,13 +17,17 @@ export class StudySessionsService {
     @InjectRepository(StudyGroup) private groupRepo: Repository<StudyGroup>,
   ) {}
 
-  findAll(filters?: { studyGroupId?: number; date?: string; search?: string }) {
+  findAll(filters?: { studyGroupId?: number; courseId?: number; date?: string; search?: string }) {
     const qb = this.repo
       .createQueryBuilder('ss')
-      .leftJoinAndSelect('ss.studyGroup', 'studyGroup');
+      .leftJoinAndSelect('ss.studyGroup', 'studyGroup')
+      .leftJoin('studyGroup.course', 'course');
 
     if (filters?.studyGroupId) {
       qb.andWhere('ss.studyGroupId = :gid', { gid: filters.studyGroupId });
+    }
+    if (filters?.courseId) {
+      qb.andWhere('studyGroup.courseId = :courseId', { courseId: filters.courseId });
     }
     if (filters?.date) {
       qb.andWhere('DATE(ss.sessionDate) = DATE(:date)', { date: filters.date });

@@ -25,9 +25,10 @@ export interface UpdateStudySessionPayload {
 export class StudySessionService {
   constructor(private http: HttpClient) {}
 
-  findAll(filters?: { studyGroupId?: number; date?: string; search?: string }) {
+  findAll(filters?: { studyGroupId?: number; courseId?: number; date?: string; search?: string }) {
     let params = new HttpParams();
     if (filters?.studyGroupId) params = params.set('studyGroupId', filters.studyGroupId);
+    if (filters?.courseId) params = params.set('courseId', filters.courseId);
     if (filters?.date) params = params.set('date', filters.date);
     if (filters?.search) params = params.set('search', filters.search);
 

@@ -1,23 +1,78 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { StudySessionService } from './study-session.service';
 import { StudySession } from './study-session.model';
+import { CourseService } from '../courses/course.service';
+import { Course } from '../courses/course.model';
 
 @Component({
   selector: 'app-study-session-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <div class="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
       <div class="max-w-6xl mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Studiesessies</h1>
 
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+          <div class="grid gap-3 sm:grid-cols-3">
+            <div>
+              <label for="search" class="block text-xs font-medium text-gray-500 mb-1">Zoeken</label>
+              <input
+                id="search"
+                type="text"
+                placeholder="Titel..."
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                [ngModel]="searchTerm"
+                (ngModelChange)="onSearchChange($event)" />
+            </div>
+            <div>
+              <label for="course" class="block text-xs font-medium text-gray-500 mb-1">Vak</label>
+              <select
+                id="course"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                [(ngModel)]="selectedCourseId"
+                (ngModelChange)="applyFilters()">
+                <option [ngValue]="undefined">Alle vakken</option>
+                @for (course of courses; track course.id) {
+                  <option [ngValue]="course.id">{{ course.name }} ({{ course.code }})</option>
+                }
+              </select>
+            </div>
+            <div>
+              <label for="date" class="block text-xs font-medium text-gray-500 mb-1">Datum</label>
+              <input
+                id="date"
+                type="date"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                [(ngModel)]="selectedDate"
+                (ngModelChange)="applyFilters()" />
+            </div>
+          </div>
+          @if (hasActiveFilters()) {
+            <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+              <span class="text-xs text-gray-500">{{ filteredCount }} resultaten</span>
+              <button
+                (click)="clearFilters()"
+                class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                Filters wissen
+              </button>
+            </div>
+          }
+        </div>
+
         @if (loading) {
           <p class="text-gray-500">Studiesessies laden...</p>
         } @else if (sessions.length === 0) {
           <div class="bg-white rounded-lg shadow p-8 text-center">
-            <p class="text-gray-500">Er zijn nog geen studiesessies beschikbaar.</p>
+            @if (hasActiveFilters()) {
+              <p class="text-gray-500">Geen studiesessies gevonden met de huidige filters.</p>
+            } @else {
+              <p class="text-gray-500">Er zijn nog geen studiesessies beschikbaar.</p>
+            }
           </div>
         } @else {
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -66,21 +121,74 @@ import { StudySession } from './study-session.model';
     </div>
   `,
 })
-export class StudySessionListComponent implements OnInit {
+export class StudySessionListComponent implements OnInit, OnDestroy {
   sessions: StudySession[] = [];
+  courses: Course[] = [];
   loading = true;
+  filteredCount = 0;
 
-  constructor(private studySessionService: StudySessionService) {}
+  searchTerm = '';
+  selectedCourseId?: number;
+  selectedDate = '';
+
+  private search$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private studySessionService: StudySessionService,
+    private courseService: CourseService,
+  ) {}
 
   ngOnInit() {
-    this.studySessionService.findAll().subscribe({
-      next: (data) => {
-        this.sessions = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+    this.courseService.findAll().subscribe((data) => (this.courses = data));
+
+    this.search$
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((term) => {
+        this.searchTerm = term;
+        this.applyFilters();
+      });
+
+    this.applyFilters();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSearchChange(term: string) {
+    this.search$.next(term);
+  }
+
+  applyFilters() {
+    this.loading = true;
+    this.studySessionService
+      .findAll({
+        courseId: this.selectedCourseId,
+        date: this.selectedDate || undefined,
+        search: this.searchTerm || undefined,
+      })
+      .subscribe({
+        next: (data) => {
+          this.sessions = data;
+          this.filteredCount = data.length;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  hasActiveFilters(): boolean {
+    return !!this.searchTerm || this.selectedCourseId !== undefined || !!this.selectedDate;
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.selectedCourseId = undefined;
+    this.selectedDate = '';
+    this.applyFilters();
   }
 }

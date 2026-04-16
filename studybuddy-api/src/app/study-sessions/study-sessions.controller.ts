@@ -23,11 +23,13 @@ export class StudySessionsController {
   @Get()
   findAll(
     @Query('studyGroupId') studyGroupId?: string,
+    @Query('courseId') courseId?: string,
     @Query('date') date?: string,
     @Query('search') search?: string,
   ) {
     return this.service.findAll({
       studyGroupId: studyGroupId ? +studyGroupId : undefined,
+      courseId: courseId ? +courseId : undefined,
       date,
       search,
     });

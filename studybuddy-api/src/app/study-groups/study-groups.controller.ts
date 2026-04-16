@@ -23,10 +23,12 @@ export class StudyGroupsController {
   @Get()
   findAll(
     @Query('courseId') courseId?: string,
+    @Query('studyYear') studyYear?: string,
     @Query('search') search?: string,
   ) {
     return this.service.findAll({
       courseId: courseId ? +courseId : undefined,
+      studyYear: studyYear ? +studyYear : undefined,
       search,
     });
   }

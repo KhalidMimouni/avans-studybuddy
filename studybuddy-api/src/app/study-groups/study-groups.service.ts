@@ -15,7 +15,7 @@ export class StudyGroupsService {
     @InjectRepository(StudyGroup) private repo: Repository<StudyGroup>,
   ) {}
 
-  findAll(filters?: { courseId?: number; search?: string }) {
+  findAll(filters?: { courseId?: number; studyYear?: number; search?: string }) {
     const qb = this.repo
       .createQueryBuilder('sg')
       .leftJoinAndSelect('sg.course', 'course')
@@ -23,6 +23,9 @@ export class StudyGroupsService {
 
     if (filters?.courseId) {
       qb.andWhere('sg.courseId = :courseId', { courseId: filters.courseId });
+    }
+    if (filters?.studyYear) {
+      qb.andWhere('course.studyYear = :studyYear', { studyYear: filters.studyYear });
     }
     if (filters?.search) {
       qb.andWhere(

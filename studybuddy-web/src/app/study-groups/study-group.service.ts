@@ -22,9 +22,10 @@ export interface UpdateStudyGroupPayload {
 export class StudyGroupService {
   constructor(private http: HttpClient) {}
 
-  findAll(filters?: { courseId?: number; search?: string }) {
+  findAll(filters?: { courseId?: number; studyYear?: number; search?: string }) {
     let params = new HttpParams();
     if (filters?.courseId) params = params.set('courseId', filters.courseId);
+    if (filters?.studyYear) params = params.set('studyYear', filters.studyYear);
     if (filters?.search) params = params.set('search', filters.search);
 
     return this.http.get<StudyGroup[]>('/api/study-groups', { params });
